@@ -12,24 +12,46 @@
 // WHEN I refresh the page
 // THEN the saved events persist
 
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
-
 // display current date in header
 $(function () {
   function displayCurrentDate() {
     let currentDate = dayjs().format('dddd, MMMM D, YYYY');
     $('#currentDay').text(currentDate);
-   
   }
+
+  // display current time in header
+  function displayCurrentTime() {
+    let currentTime = dayjs().format('h:mm A');
+    $('#currentTime').text(currentTime);
+  }
+
+  //update time block styles
+  function updateBlockStyles() {
+    const currentHour = dayjs().hour();
+
+    $('.time-block').each(function () {
+      const blockHour = parseInt($(this).attr('data-hour'));
+
+      if (blockHour < currentHour) {
+        $(this).removeClass('present future').addClass('past');
+      } else if (blockHour === currentHour) {
+        $(this).removeClass('past future').addClass('present');
+      } else {
+        $(this).removeClass('past present').addClass('future');
+      }
+    });
+  }
+
   displayCurrentDate();
-//display current time in header
-function displayCurrentTime() {
-let currentTime = dayjs().format('h:mm A');
-$('#currentTime').text(currentTime);
-  }
   displayCurrentTime();
+  updateBlockStyles();
+
+  // Call updateBlockStyles function every minute to update styles
+  setInterval(updateBlockStyles, 60000);
+});
+
+
+
   // TODO: Add a listener for click events on the save button. This code should
   // use the id in the containing time-block as a key to save the user input in
   // local storage. HINT: What does `this` reference in the click listener
@@ -48,5 +70,4 @@ $('#currentTime').text(currentTime);
   // attribute of each time-block be used to do this?
   //
   // TODO: Add code to display the current date in the header of the page.
-});
 
